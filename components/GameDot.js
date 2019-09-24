@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import GestureRecognizer, {
   swipeDirections,
 } from 'react-native-swipe-gestures';
 
-import { Colors } from '../styles';
+import Dot from './Dot';
 
-const GameDot = ({ color }) => {
+const GameDot = ({ boardWidth, color }) => {
+  const [dotColor, setDotColor] = useState(color);
+
   const onSwipe = (gestureName, gestureState) => {
     const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
 
     switch (gestureName) {
       case SWIPE_UP:
         console.log('swiped up');
+        setDotColor(null);
         break;
       case SWIPE_DOWN:
         console.log('swiped down');
@@ -30,18 +33,9 @@ const GameDot = ({ color }) => {
     <GestureRecognizer
       onSwipe={(direction, state) => onSwipe(direction, state)}
     >
-      <View style={styles.container(color)} />
+      <Dot boardWidth={boardWidth} color={dotColor} />
     </GestureRecognizer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: (color = 'red') => ({
-    backgroundColor: Colors[color],
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  }),
-});
 
 export default GameDot;

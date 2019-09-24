@@ -1,15 +1,22 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import GameDot from '../components/GameDot';
+import Board from '../components/Board';
 
 const GameScreen = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Text>this is the game</Text>
-      <GameDot />
+      <Board />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+});
 
 export default GameScreen;
