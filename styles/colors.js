@@ -1,5 +1,9 @@
+export const black = '#000000';
+export const blue = '#2368F0';
 export const darkGray = '#E1E1E1';
 export const gray = '#ECECEC';
 export const green = '#45DA8A';
 export const orange = '#FD9630';
+export const purple = '#8936FE';
 export const red = '#FF4848';
+export const yellow = '#FFE030';
