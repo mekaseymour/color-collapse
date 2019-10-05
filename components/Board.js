@@ -1,28 +1,94 @@
-import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import Dot from './Dot';
 import GameDot from './GameDot';
 import { Colors } from '../styles';
+import generateStartingColors from '../helpers/generateStartingColors';
+import { BoardHelpers } from '../helpers';
 
 import { GAME_BOARD_DIMENSION, GAME_BOARD_SPACING } from '../util/configs';
-
-const startingGame = [3, 3, 6, 1, 7, 6, 2, 2, 3, 6, 1, 6, 2, 1, 7, 5];
+import getResultingColor from '../helpers/getResultingColor';
 
 const Board = () => {
   const [boardWidth, setBoardWidth] = useState(null);
+  const [colorKeys, setColorKeys] = useState([]);
+  const [colors, setColors] = useState([]);
 
-  const generateRows = () => {
+  useEffect(() => {
+    setColors(generateStartingColors());
+  }, []);
+
+  const generateRows = colors => {
     const rows = [];
 
     for (let i = 0; i < GAME_BOARD_DIMENSION; i++) {
       const rowStart = i * GAME_BOARD_DIMENSION;
       const rowEnd = rowStart + GAME_BOARD_DIMENSION;
-      const row = startingGame.slice(rowStart, rowEnd);
+      const row = colors.slice(rowStart, rowEnd);
       rows.push(row);
     }
 
     return rows;
+  };
+
+  const checkCollision = (actorPosition, direction) => {
+    let spaceCollidingWith;
+
+    const actorPositionIsInTopRow = actorPosition < GAME_BOARD_DIMENSION;
+    const actorPositionIsInBottomRow =
+      actorPosition >=
+      GAME_BOARD_DIMENSION * GAME_BOARD_DIMENSION - GAME_BOARD_DIMENSION;
+    const actorPositionIsInLeftColumn =
+      actorPosition === 0 || actorPosition % GAME_BOARD_DIMENSION === 0;
+    const actorPositionIsInRightColumn =
+      (actorPosition + 1) % GAME_BOARD_DIMENSION === 0;
+
+    switch (direction) {
+      case 'up':
+        if (!BoardHelpers.positionIsInTopRow(actorPosition)) {
+          spaceCollidingWith = actorPosition - GAME_BOARD_DIMENSION;
+        }
+        break;
+      case 'down':
+        if (!BoardHelpers.positionIsInBottomRow(actorPosition)) {
+          spaceCollidingWith = actorPosition + GAME_BOARD_DIMENSION;
+        }
+        break;
+      case 'left':
+        if (!BoardHelpers.positionIsInLeftColumn(actorPosition)) {
+          spaceCollidingWith = actorPosition - 1;
+        }
+        break;
+      case 'right':
+        if (!BoardHelpers.positionIsInRightColumn(actorPosition)) {
+          spaceCollidingWith = actorPosition + 1;
+        }
+        break;
+    }
+
+    if (spaceCollidingWith) {
+      handleCollision(actorPosition, spaceCollidingWith);
+    }
+  };
+
+  const handleCollision = (actorPosition, collidedPosition) => {
+    const colorsFromState = [...colors];
+
+    const firstColor = colorsFromState[actorPosition];
+    const secondColor = colorsFromState[collidedPosition];
+
+    const resultingColorFromCollision = getResultingColor(
+      firstColor,
+      secondColor
+    );
+
+    if (resultingColorFromCollision) {
+      colorsFromState[collidedPosition] = resultingColorFromCollision;
+      colorsFromState[actorPosition] = null;
+
+      setColors(colorsFromState);
+    }
   };
 
   return (
@@ -31,7 +97,7 @@ const Board = () => {
       onLayout={event => setBoardWidth(event.nativeEvent.layout.width)}
     >
       <View style={styles.placeholderRowsWrapper}>
-        {generateRows().map((row, i) => {
+        {generateRows(colors).map((row, i) => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
               {row.map((space, j) => (
@@ -42,16 +108,20 @@ const Board = () => {
         })}
       </View>
       <View style={styles.gameDotRowsWrapper}>
-        {generateRows().map((row, i) => {
+        {generateRows(colors).map((row, i) => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
-              {row.map((space, j) => (
-                <GameDot
-                  key={`${i}-${j}`}
-                  boardWidth={boardWidth}
-                  color={Colors.red}
-                />
-              ))}
+              {row.map((color, j) => {
+                return (
+                  <GameDot
+                    key={`${i}-${j}`}
+                    position={i * GAME_BOARD_DIMENSION + j}
+                    boardWidth={boardWidth}
+                    color={color === null ? Colors.darkGray : Colors[color]}
+                    onMove={checkCollision}
+                  />
+                );
+              })}
             </View>
           );
         })}
