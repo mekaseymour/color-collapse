@@ -5,7 +5,7 @@ import Dot from './Dot';
 import GameDot from './GameDot';
 import { Colors } from '../styles';
 import generateStartingColors from '../helpers/generateStartingColors';
-import { COLORS } from '../util/colors';
+import { BoardHelpers } from '../helpers';
 
 import { GAME_BOARD_DIMENSION, GAME_BOARD_SPACING } from '../util/configs';
 import getResultingColor from '../helpers/getResultingColor';
@@ -13,14 +13,14 @@ import getResultingColor from '../helpers/getResultingColor';
 const Board = () => {
   const [boardWidth, setBoardWidth] = useState(null);
   const [colorKeys, setColorKeys] = useState([]);
+  const [colors, setColors] = useState([]);
 
   useEffect(() => {
-    setColorKeys(generateStartingColors());
+    setColors(generateStartingColors());
   }, []);
 
   const generateRows = colors => {
     const rows = [];
-    console.log('inside generateRows');
 
     for (let i = 0; i < GAME_BOARD_DIMENSION; i++) {
       const rowStart = i * GAME_BOARD_DIMENSION;
@@ -35,57 +35,61 @@ const Board = () => {
   const checkCollision = (actorPosition, direction) => {
     let spaceCollidingWith;
 
+    const actorPositionIsInTopRow = actorPosition < GAME_BOARD_DIMENSION;
+    const actorPositionIsInBottomRow =
+      actorPosition >=
+      GAME_BOARD_DIMENSION * GAME_BOARD_DIMENSION - GAME_BOARD_DIMENSION;
+    const actorPositionIsInLeftColumn =
+      actorPosition === 0 || actorPosition % GAME_BOARD_DIMENSION === 0;
+    const actorPositionIsInRightColumn =
+      (actorPosition + 1) % GAME_BOARD_DIMENSION === 0;
+
     switch (direction) {
       case 'up':
-        spaceCollidingWith = actorPosition - GAME_BOARD_DIMENSION;
+        if (!BoardHelpers.positionIsInTopRow(actorPosition)) {
+          spaceCollidingWith = actorPosition - GAME_BOARD_DIMENSION;
+        }
         break;
       case 'down':
-        spaceCollidingWith = actorPosition + GAME_BOARD_DIMENSION;
+        if (!BoardHelpers.positionIsInBottomRow(actorPosition)) {
+          spaceCollidingWith = actorPosition + GAME_BOARD_DIMENSION;
+        }
         break;
       case 'left':
-        spaceCollidingWith = actorPosition - 1;
+        if (!BoardHelpers.positionIsInLeftColumn(actorPosition)) {
+          spaceCollidingWith = actorPosition - 1;
+        }
         break;
       case 'right':
-        spaceCollidingWith = actorPosition + 1;
+        if (!BoardHelpers.positionIsInRightColumn(actorPosition)) {
+          spaceCollidingWith = actorPosition + 1;
+        }
         break;
     }
 
-    if (colorKeys[spaceCollidingWith]) {
+    if (spaceCollidingWith) {
       handleCollision(actorPosition, spaceCollidingWith);
     }
   };
 
   const handleCollision = (actorPosition, collidedPosition) => {
-    const colorsFromState = [...colorKeys];
+    const colorsFromState = [...colors];
 
-    console.log('need to handle collision');
-
-    const firstColor = COLORS[colorsFromState[actorPosition]];
-    const secondColor = COLORS[colorsFromState[collidedPosition]];
-
-    console.log('firstColor', firstColor);
-    console.log('secondColor', secondColor);
+    const firstColor = colorsFromState[actorPosition];
+    const secondColor = colorsFromState[collidedPosition];
 
     const resultingColorFromCollision = getResultingColor(
       firstColor,
       secondColor
     );
 
-    console.log('resultingColorFromCollision', resultingColorFromCollision);
-
     if (resultingColorFromCollision) {
-      colorsFromState[collidedPosition] = COLORS.indexOf(
-        resultingColorFromCollision
-      );
+      colorsFromState[collidedPosition] = resultingColorFromCollision;
       colorsFromState[actorPosition] = null;
 
-      console.log('colorsFromState', colorsFromState);
-
-      setColorKeys(colorsFromState);
+      setColors(colorsFromState);
     }
   };
-
-  console.log('colorKeys', colorKeys);
 
   return (
     <View
@@ -93,7 +97,7 @@ const Board = () => {
       onLayout={event => setBoardWidth(event.nativeEvent.layout.width)}
     >
       <View style={styles.placeholderRowsWrapper}>
-        {generateRows(colorKeys).map((row, i) => {
+        {generateRows(colors).map((row, i) => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
               {row.map((space, j) => (
@@ -104,20 +108,16 @@ const Board = () => {
         })}
       </View>
       <View style={styles.gameDotRowsWrapper}>
-        {generateRows(colorKeys).map((row, i) => {
+        {generateRows(colors).map((row, i) => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
-              {row.map((colorKey, j) => {
+              {row.map((color, j) => {
                 return (
                   <GameDot
                     key={`${i}-${j}`}
                     position={i * GAME_BOARD_DIMENSION + j}
                     boardWidth={boardWidth}
-                    color={
-                      colorKey === null
-                        ? Colors.darkGray
-                        : Colors[COLORS[colorKey]]
-                    }
+                    color={color === null ? Colors.darkGray : Colors[color]}
                     onMove={checkCollision}
                   />
                 );

@@ -6,4 +6,16 @@ export const PURPLE = 'purple';
 export const RED = 'red';
 export const YELLOW = 'yellow';
 
-export const COLORS = [RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE];
+export const COLORFUL_COLORS = {
+  RED,
+  ORANGE,
+  YELLOW,
+  GREEN,
+  BLUE,
+  PURPLE,
+};
+
+export const COLORS = {
+  BLACK,
+  ...COLORFUL_COLORS,
+};
