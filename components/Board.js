@@ -7,7 +7,11 @@ import { Colors } from '../styles';
 import generateStartingColors from '../helpers/generateStartingColors';
 import { BoardHelpers } from '../helpers';
 
-import { GAME_BOARD_DIMENSION, GAME_BOARD_SPACING } from '../util/configs';
+import {
+  DOT_ACTION_DURATION,
+  GAME_BOARD_DIMENSION,
+  GAME_BOARD_SPACING,
+} from '../util/configs';
 import getResultingColor from '../helpers/getResultingColor';
 
 const Board = () => {
@@ -32,37 +36,32 @@ const Board = () => {
     return rows;
   };
 
-  const checkCollision = (actorPosition, direction) => {
+  const checkCollision = (actorPosition, direction, afterCollision) => {
     let spaceCollidingWith;
-
-    const actorPositionIsInTopRow = actorPosition < GAME_BOARD_DIMENSION;
-    const actorPositionIsInBottomRow =
-      actorPosition >=
-      GAME_BOARD_DIMENSION * GAME_BOARD_DIMENSION - GAME_BOARD_DIMENSION;
-    const actorPositionIsInLeftColumn =
-      actorPosition === 0 || actorPosition % GAME_BOARD_DIMENSION === 0;
-    const actorPositionIsInRightColumn =
-      (actorPosition + 1) % GAME_BOARD_DIMENSION === 0;
 
     switch (direction) {
       case 'up':
         if (!BoardHelpers.positionIsInTopRow(actorPosition)) {
           spaceCollidingWith = actorPosition - GAME_BOARD_DIMENSION;
+          afterCollision();
         }
         break;
       case 'down':
         if (!BoardHelpers.positionIsInBottomRow(actorPosition)) {
           spaceCollidingWith = actorPosition + GAME_BOARD_DIMENSION;
+          afterCollision();
         }
         break;
       case 'left':
         if (!BoardHelpers.positionIsInLeftColumn(actorPosition)) {
           spaceCollidingWith = actorPosition - 1;
+          afterCollision();
         }
         break;
       case 'right':
         if (!BoardHelpers.positionIsInRightColumn(actorPosition)) {
           spaceCollidingWith = actorPosition + 1;
+          afterCollision();
         }
         break;
     }
@@ -87,7 +86,7 @@ const Board = () => {
       colorsFromState[collidedPosition] = resultingColorFromCollision;
       colorsFromState[actorPosition] = null;
 
-      setColors(colorsFromState);
+      setTimeout(() => setColors(colorsFromState), DOT_ACTION_DURATION);
     }
   };
 
@@ -117,7 +116,7 @@ const Board = () => {
                     key={`${i}-${j}`}
                     position={i * GAME_BOARD_DIMENSION + j}
                     boardWidth={boardWidth}
-                    color={color === null ? Colors.darkGray : Colors[color]}
+                    color={color === null ? 'transparent' : Colors[color]}
                     onMove={checkCollision}
                   />
                 );
