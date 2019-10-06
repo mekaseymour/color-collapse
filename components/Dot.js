@@ -8,7 +8,13 @@ import {
   GAME_BOARD_SPACING,
 } from '../util/configs';
 
-const Dot = ({ boardWidth, color, horizontalShift, verticalShift }) => {
+const Dot = ({
+  boardWidth,
+  color,
+  horizontalShift,
+  verticalShift,
+  onAnimationComplete,
+}) => {
   const [leftPosition, setLeftPosition] = useState(
     new Animated.ValueXY({ x: 0, y: 0 })
   );
@@ -31,7 +37,7 @@ const Dot = ({ boardWidth, color, horizontalShift, verticalShift }) => {
       Animated.timing(leftPosition, {
         toValue: { x: xShift, y: 0 },
         duration: DOT_ACTION_DURATION,
-      }).start();
+      }).start(() => onAnimationComplete());
     }
 
     if (verticalShift) {
@@ -47,7 +53,7 @@ const Dot = ({ boardWidth, color, horizontalShift, verticalShift }) => {
       Animated.timing(leftPosition, {
         toValue: { x: 0, y: yShift },
         duration: DOT_ACTION_DURATION,
-      }).start();
+      }).start(() => onAnimationComplete());
     }
   }, [horizontalShift, verticalShift]);
 
