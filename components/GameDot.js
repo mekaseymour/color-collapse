@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 import GestureRecognizer, {
   swipeDirections,
 } from 'react-native-swipe-gestures';
 
 import Dot from './Dot';
+import { GAME_BOARD_SPACING } from '../util/configs';
 
 const GameDot = ({ boardWidth, color, onMove, position }) => {
   const [dotColor, setDotColor] = useState(null);
+  const [horizontalShift, setHorizontalShift] = useState(0);
+  const [verticalShift, setVerticalShift] = useState(0);
 
   useEffect(() => {
     setDotColor(color);
@@ -18,20 +21,16 @@ const GameDot = ({ boardWidth, color, onMove, position }) => {
 
     switch (gestureName) {
       case SWIPE_UP:
-        console.log('swiped up');
-        onMove(position, 'up');
+        onMove(position, 'up', () => setVerticalShift(-GAME_BOARD_SPACING));
         break;
       case SWIPE_DOWN:
-        console.log('swiped down');
-        onMove(position, 'down');
+        onMove(position, 'down', () => setVerticalShift(GAME_BOARD_SPACING));
         break;
       case SWIPE_LEFT:
-        console.log('swiped left');
-        onMove(position, 'left');
+        onMove(position, 'left', () => setHorizontalShift(-GAME_BOARD_SPACING));
         break;
       case SWIPE_RIGHT:
-        console.log('swiped right');
-        onMove(position, 'right');
+        onMove(position, 'right', () => setHorizontalShift(GAME_BOARD_SPACING));
         break;
     }
   };
@@ -40,7 +39,14 @@ const GameDot = ({ boardWidth, color, onMove, position }) => {
     <GestureRecognizer
       onSwipe={(direction, state) => onSwipe(direction, state)}
     >
-      <Dot boardWidth={boardWidth} color={dotColor} />
+      <View>
+        <Dot
+          boardWidth={boardWidth}
+          color={dotColor}
+          horizontalShift={horizontalShift}
+          verticalShift={verticalShift}
+        />
+      </View>
     </GestureRecognizer>
   );
 };
