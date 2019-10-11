@@ -82,14 +82,42 @@ const Board = () => {
     }
   };
 
-  const onAnimationComplete = position => {
+  const fillSpacesDown = vacatedPosition => {
+    if (BoardHelpers.positionIsInTopRow(vacatedPosition)) {
+      console.log('need to generate new piece');
+      return;
+    }
+
+    const spaceAboveVacatedPosition = vacatedPosition - GAME_BOARD_DIMENSION;
+    const gamePiecesFromState = { ...gamePieces };
+    gamePiecesFromState[spaceAboveVacatedPosition].shift = true;
+    setPiecesData(gamePiecesFromState);
+
+    return fillSpacesDown(spaceAboveVacatedPosition);
+  };
+
+  const onCollisionComplete = position => {
     const gamePiecesFromState = { ...gamePieces };
     gamePiecesFromState[position].color = null;
     gamePiecesFromState[position].colorWhileAnimating = null;
     gamePiecesFromState[position].isAnimating = false;
+    setPiecesData(gamePiecesFromState);
 
+    fillSpacesDown(position);
+  };
+
+  const onShiftComplete = position => {
+    const gamePiecesFromState = { ...gamePieces };
+    const colorOfShiftedPiece = gamePiecesFromState[position].color;
+    const spaceShiftedInto = position + GAME_BOARD_DIMENSION;
+
+    gamePiecesFromState[position].shift = false;
+    gamePiecesFromState[position].color = null;
+    gamePiecesFromState[spaceShiftedInto].color = colorOfShiftedPiece;
     setPiecesData(gamePiecesFromState);
   };
+
+  console.log('gamePieces', gamePieces);
 
   return (
     <View
@@ -101,7 +129,11 @@ const Board = () => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
               {row.map((space, j) => (
-                <Dot key={`${i}-${j}`} boardWidth={boardWidth} />
+                <Dot
+                  key={`${i}-${j}`}
+                  boardWidth={boardWidth}
+                  color="PLACEHOLDER"
+                />
               ))}
             </View>
           );
@@ -125,7 +157,8 @@ const Board = () => {
                       boardWidth={boardWidth}
                       onValidCollision={handleCollision}
                       onMove={handleMove}
-                      onAnimationComplete={onAnimationComplete}
+                      onCollisionComplete={onCollisionComplete}
+                      onShiftComplete={onShiftComplete}
                     />
                   );
                 } else {
@@ -162,6 +195,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: GAME_BOARD_SPACING,
     left: GAME_BOARD_SPACING,
+    zIndex: 1,
   },
   placeholderRowsWrapper: {
     justifyContent: 'space-between',

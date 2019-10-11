@@ -14,6 +14,7 @@ const Dot = ({
   horizontalShift,
   verticalShift,
   onAnimationComplete,
+  isShifting,
 }) => {
   const [leftPosition, setLeftPosition] = useState(
     new Animated.ValueXY({ x: 0, y: 0 })
@@ -57,16 +58,29 @@ const Dot = ({
     }
   }, [horizontalShift, verticalShift]);
 
+  const colorToDisplay = () => {
+    if (color === 'PLACEHOLDER') {
+      return Colors.darkGray;
+    } else if (color) {
+      return color;
+    } else {
+      ('transparent');
+    }
+  };
+
   return (
     <Animated.View
-      style={[styles.dot(dotWidth, color), leftPosition.getLayout()]}
+      style={[
+        styles.dot(dotWidth, colorToDisplay(), isShifting),
+        leftPosition.getLayout(),
+      ]}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  dot: (dotWidth, color) => ({
-    backgroundColor: color || Colors.darkGray,
+  dot: (dotWidth, color, isShifting) => ({
+    backgroundColor: color,
     width: dotWidth,
     aspectRatio: 1,
     borderRadius: 50,

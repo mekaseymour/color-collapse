@@ -12,20 +12,27 @@ import { Colors } from '../styles';
 const GameDot = ({
   boardWidth,
   onMove,
-  onAnimationComplete,
+  onCollisionComplete,
   onValidCollision,
   data,
+  onShiftComplete,
 }) => {
   const [dotColor, setDotColor] = useState(null);
   const [horizontalShift, setHorizontalShift] = useState(0);
   const [verticalShift, setVerticalShift] = useState(0);
 
-  const { color, position, isAnimating, colorWhileAnimating } = data;
+  const { color, position, isAnimating, colorWhileAnimating, shift } = data;
 
   useEffect(() => {
-    // const colorDisplay = color === null ? 'transparent' : Colors[color];
-    setDotColor(isAnimating ? Colors[colorWhileAnimating] : Colors[color]);
+    const colorToDisplay = color ? Colors[color] : 'transparent';
+    setDotColor(isAnimating ? Colors[colorWhileAnimating] : colorToDisplay);
   });
+
+  useEffect(() => {
+    if (shift) {
+      setVerticalShift(GAME_BOARD_SPACING);
+    }
+  }, [shift]);
 
   const onSwipe = (gestureName, gestureState) => {
     const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
@@ -53,13 +60,16 @@ const GameDot = ({
     <GestureRecognizer
       onSwipe={(direction, state) => onSwipe(direction, state)}
     >
-      <View>
+      <View style={{ zIndex: 1 }}>
         <Dot
           boardWidth={boardWidth}
           color={dotColor}
           horizontalShift={horizontalShift}
           verticalShift={verticalShift}
-          onAnimationComplete={() => onAnimationComplete(position)}
+          onAnimationComplete={() =>
+            shift ? onShiftComplete(position) : onCollisionComplete(position)
+          }
+          isShifting={shift}
         />
       </View>
     </GestureRecognizer>
