@@ -16,12 +16,20 @@ const GameDot = ({
   onValidCollision,
   data,
   onShiftComplete,
+  onSwellComplete,
 }) => {
   const [dotColor, setDotColor] = useState(null);
   const [horizontalShift, setHorizontalShift] = useState(0);
   const [verticalShift, setVerticalShift] = useState(0);
 
-  const { color, position, isAnimating, colorWhileAnimating, shift } = data;
+  const {
+    color,
+    position,
+    isAnimating,
+    colorWhileAnimating,
+    shift,
+    swell,
+  } = data;
 
   useEffect(() => {
     const colorToDisplay = color ? Colors[color] : 'transparent';
@@ -70,6 +78,8 @@ const GameDot = ({
             shift ? onShiftComplete(position) : onCollisionComplete(position)
           }
           isShifting={shift}
+          onSwellComplete={() => onSwellComplete(position)}
+          showSwell={!!swell}
         />
       </View>
     </GestureRecognizer>

@@ -4,8 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Dot from './Dot';
 import GameDot from './GameDot';
 import { Colors } from '../styles';
-import generateStartingColors from '../helpers/generateStartingColors';
-import { BoardHelpers } from '../helpers';
+import { BoardHelpers, ColorsHelpers } from '../helpers';
 import validCollisionOnSwipe from '../helpers/validCollisionOnSwipe';
 
 import {
@@ -17,17 +16,17 @@ import getResultingColor from '../helpers/getResultingColor';
 
 const Board = () => {
   const [boardWidth, setBoardWidth] = useState(null);
-  const [gamePieces, setPiecesData] = useState({});
+  const [gamePieces, setGamePiecesData] = useState({});
 
   useEffect(() => {
-    const startingColors = generateStartingColors();
+    const startingColors = ColorsHelpers.generateStartingColors();
     const data = {};
 
     startingColors.forEach((color, i) => {
       data[i] = { position: i, color: color };
     });
 
-    setPiecesData(data);
+    setGamePiecesData(data);
   }, []);
 
   const generateRows = pieces => {
@@ -76,24 +75,34 @@ const Board = () => {
 
       gamePiecesFromState[collidedPosition].color = resultingColorFromCollision;
 
-      setPiecesData(gamePiecesFromState);
+      setGamePiecesData(gamePiecesFromState);
 
       afterCollision();
     }
   };
 
   const fillSpacesDown = vacatedPosition => {
+    const gamePiecesFromState = { ...gamePieces };
+
     if (BoardHelpers.positionIsInTopRow(vacatedPosition)) {
-      console.log('need to generate new piece');
+      const newGeneratedColor = ColorsHelpers.generateRandomColor();
+
+      gamePiecesFromState[vacatedPosition].color = newGeneratedColor;
+      gamePiecesFromState[vacatedPosition].swell = true;
+      setGamePiecesData(gamePiecesFromState);
       return;
     }
 
     const spaceAboveVacatedPosition = vacatedPosition - GAME_BOARD_DIMENSION;
-    const gamePiecesFromState = { ...gamePieces };
     gamePiecesFromState[spaceAboveVacatedPosition].shift = true;
-    setPiecesData(gamePiecesFromState);
+    setGamePiecesData(gamePiecesFromState);
+  };
 
-    return fillSpacesDown(spaceAboveVacatedPosition);
+  const onSwellComplete = position => {
+    const gamePiecesFromState = { ...gamePieces };
+
+    gamePiecesFromState[position].swell = false;
+    setGamePiecesData(gamePiecesFromState);
   };
 
   const onCollisionComplete = position => {
@@ -101,7 +110,7 @@ const Board = () => {
     gamePiecesFromState[position].color = null;
     gamePiecesFromState[position].colorWhileAnimating = null;
     gamePiecesFromState[position].isAnimating = false;
-    setPiecesData(gamePiecesFromState);
+    setGamePiecesData(gamePiecesFromState);
 
     fillSpacesDown(position);
   };
@@ -114,10 +123,10 @@ const Board = () => {
     gamePiecesFromState[position].shift = false;
     gamePiecesFromState[position].color = null;
     gamePiecesFromState[spaceShiftedInto].color = colorOfShiftedPiece;
-    setPiecesData(gamePiecesFromState);
-  };
+    setGamePiecesData(gamePiecesFromState);
 
-  console.log('gamePieces', gamePieces);
+    fillSpacesDown(position);
+  };
 
   return (
     <View
@@ -159,6 +168,7 @@ const Board = () => {
                       onMove={handleMove}
                       onCollisionComplete={onCollisionComplete}
                       onShiftComplete={onShiftComplete}
+                      onSwellComplete={onSwellComplete}
                     />
                   );
                 } else {
