@@ -6,6 +6,7 @@ import GameDot from './GameDot';
 import { Colors } from '../styles';
 import generateStartingColors from '../helpers/generateStartingColors';
 import { BoardHelpers } from '../helpers';
+import validCollisionOnSwipe from '../helpers/validCollisionOnSwipe';
 
 import {
   DOT_ACTION_DURATION,
@@ -16,66 +17,51 @@ import getResultingColor from '../helpers/getResultingColor';
 
 const Board = () => {
   const [boardWidth, setBoardWidth] = useState(null);
-  const [colorKeys, setColorKeys] = useState([]);
-  const [colors, setColors] = useState([]);
+  const [gamePieces, setPiecesData] = useState({});
 
   useEffect(() => {
-    setColors(generateStartingColors());
+    const startingColors = generateStartingColors();
+    const data = {};
+
+    startingColors.forEach((color, i) => {
+      data[i] = { position: i, color: color };
+    });
+
+    setPiecesData(data);
   }, []);
 
-  const generateRows = colors => {
+  const generateRows = pieces => {
     const rows = [];
 
     for (let i = 0; i < GAME_BOARD_DIMENSION; i++) {
       const rowStart = i * GAME_BOARD_DIMENSION;
       const rowEnd = rowStart + GAME_BOARD_DIMENSION;
-      const row = colors.slice(rowStart, rowEnd);
+      const row = pieces.slice(rowStart, rowEnd);
       rows.push(row);
     }
 
     return rows;
   };
 
-  const checkCollision = (actorPosition, direction, afterCollision) => {
-    let spaceCollidingWith;
+  const handleMove = (originatedPosition, moveDirection, onSuccessfulMove) => {
+    const validSpaceCollidingWith = validCollisionOnSwipe(
+      originatedPosition,
+      moveDirection,
+      gamePieces
+    );
 
-    switch (direction) {
-      case 'up':
-        if (!BoardHelpers.positionIsInTopRow(actorPosition)) {
-          spaceCollidingWith = actorPosition - GAME_BOARD_DIMENSION;
-          afterCollision();
-        }
-        break;
-      case 'down':
-        if (!BoardHelpers.positionIsInBottomRow(actorPosition)) {
-          spaceCollidingWith = actorPosition + GAME_BOARD_DIMENSION;
-          afterCollision();
-        }
-        break;
-      case 'left':
-        if (!BoardHelpers.positionIsInLeftColumn(actorPosition)) {
-          spaceCollidingWith = actorPosition - 1;
-          afterCollision();
-        }
-        break;
-      case 'right':
-        if (!BoardHelpers.positionIsInRightColumn(actorPosition)) {
-          spaceCollidingWith = actorPosition + 1;
-          afterCollision();
-        }
-        break;
-    }
-
-    if (spaceCollidingWith) {
-      handleCollision(actorPosition, spaceCollidingWith);
+    if (validSpaceCollidingWith) {
+      handleCollision(
+        originatedPosition,
+        validSpaceCollidingWith,
+        onSuccessfulMove
+      );
     }
   };
 
-  const handleCollision = (actorPosition, collidedPosition) => {
-    const colorsFromState = [...colors];
-
-    const firstColor = colorsFromState[actorPosition];
-    const secondColor = colorsFromState[collidedPosition];
+  const handleCollision = (actorPosition, collidedPosition, afterCollision) => {
+    const firstColor = gamePieces[actorPosition].color;
+    const secondColor = gamePieces[collidedPosition].color;
 
     const resultingColorFromCollision = getResultingColor(
       firstColor,
@@ -83,11 +69,26 @@ const Board = () => {
     );
 
     if (resultingColorFromCollision) {
-      colorsFromState[collidedPosition] = resultingColorFromCollision;
-      colorsFromState[actorPosition] = null;
+      const gamePiecesFromState = { ...gamePieces };
+      gamePiecesFromState[actorPosition].color = null;
+      gamePiecesFromState[actorPosition].colorWhileAnimating = firstColor;
+      gamePiecesFromState[actorPosition].isAnimating = true;
 
-      setTimeout(() => setColors(colorsFromState), DOT_ACTION_DURATION);
+      gamePiecesFromState[collidedPosition].color = resultingColorFromCollision;
+
+      setPiecesData(gamePiecesFromState);
+
+      afterCollision();
     }
+  };
+
+  const onAnimationComplete = position => {
+    const gamePiecesFromState = { ...gamePieces };
+    gamePiecesFromState[position].color = null;
+    gamePiecesFromState[position].colorWhileAnimating = null;
+    gamePiecesFromState[position].isAnimating = false;
+
+    setPiecesData(gamePiecesFromState);
   };
 
   return (
@@ -96,7 +97,7 @@ const Board = () => {
       onLayout={event => setBoardWidth(event.nativeEvent.layout.width)}
     >
       <View style={styles.placeholderRowsWrapper}>
-        {generateRows(colors).map((row, i) => {
+        {generateRows(Object.values(gamePieces)).map((row, i) => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
               {row.map((space, j) => (
@@ -107,19 +108,29 @@ const Board = () => {
         })}
       </View>
       <View style={styles.gameDotRowsWrapper}>
-        {generateRows(colors).map((row, i) => {
+        {generateRows(Object.values(gamePieces)).map((row, i) => {
           return (
             <View key={`row-${i}`} style={styles.boardRow}>
-              {row.map((color, j) => {
-                return (
-                  <GameDot
-                    key={`${i}-${j}`}
-                    position={i * GAME_BOARD_DIMENSION + j}
-                    boardWidth={boardWidth}
-                    color={color === null ? 'transparent' : Colors[color]}
-                    onMove={checkCollision}
-                  />
-                );
+              {row.map((space, j) => {
+                const position = i * GAME_BOARD_DIMENSION + j;
+
+                if (
+                  gamePieces[position].color ||
+                  gamePieces[position].isAnimating
+                ) {
+                  return (
+                    <GameDot
+                      key={`${i}-${j}`}
+                      data={gamePieces[position]}
+                      boardWidth={boardWidth}
+                      onValidCollision={handleCollision}
+                      onMove={handleMove}
+                      onAnimationComplete={onAnimationComplete}
+                    />
+                  );
+                } else {
+                  return <Dot key={`${i}-${j}`} boardWidth={boardWidth} />;
+                }
               })}
             </View>
           );
