@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Dot from './Dot';
 import GameDot from './GameDot';
 import { Colors } from '../styles';
-import { BoardHelpers, ColorsHelpers } from '../helpers';
+import { BoardHelpers, ColorsHelpers, GameHelpers } from '../helpers';
 import validCollisionOnSwipe from '../helpers/validCollisionOnSwipe';
 
 import {
@@ -12,9 +12,8 @@ import {
   GAME_BOARD_DIMENSION,
   GAME_BOARD_SPACING,
 } from '../util/configs';
-import getResultingColor from '../helpers/getResultingColor';
 
-const Board = () => {
+const Board = ({ context }) => {
   const [boardWidth, setBoardWidth] = useState(null);
   const [gamePieces, setGamePiecesData] = useState({});
 
@@ -62,7 +61,7 @@ const Board = () => {
     const firstColor = gamePieces[actorPosition].color;
     const secondColor = gamePieces[collidedPosition].color;
 
-    const resultingColorFromCollision = getResultingColor(
+    const resultingColorFromCollision = ColorsHelpers.getResultingColor(
       firstColor,
       secondColor
     );
@@ -76,6 +75,12 @@ const Board = () => {
       gamePiecesFromState[collidedPosition].color = resultingColorFromCollision;
 
       setGamePiecesData(gamePiecesFromState);
+      const points = GameHelpers.getPointsEarnedFromCollision(
+        firstColor,
+        secondColor
+      );
+      const totalFromState = context.score;
+      context.setScore(totalFromState + points);
 
       afterCollision();
     }
