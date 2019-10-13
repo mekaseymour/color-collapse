@@ -13,7 +13,7 @@ import {
   GAME_BOARD_SPACING,
 } from '../util/configs';
 
-const Board = ({ context }) => {
+const Board = ({ context, gamesCount, onGameOver }) => {
   const [boardWidth, setBoardWidth] = useState(null);
   const [gamePieces, setGamePiecesData] = useState({});
 
@@ -26,7 +26,7 @@ const Board = ({ context }) => {
     });
 
     setGamePiecesData(data);
-  }, []);
+  }, [gamesCount]);
 
   const generateRows = pieces => {
     const rows = [];
@@ -67,6 +67,7 @@ const Board = ({ context }) => {
     );
 
     if (resultingColorFromCollision) {
+      /* update pieces' colors after move */
       const gamePiecesFromState = { ...gamePieces };
       gamePiecesFromState[actorPosition].color = null;
       gamePiecesFromState[actorPosition].colorWhileAnimating = firstColor;
@@ -75,6 +76,8 @@ const Board = ({ context }) => {
       gamePiecesFromState[collidedPosition].color = resultingColorFromCollision;
 
       setGamePiecesData(gamePiecesFromState);
+
+      /* update points after move */
       const points = GameHelpers.getPointsEarnedFromCollision(
         firstColor,
         secondColor
@@ -86,6 +89,11 @@ const Board = ({ context }) => {
     }
   };
 
+  const noValidMovesAvailable = () =>
+    !Object.values(gamePieces).some(p =>
+      BoardHelpers.pieceHasValidMove(p, gamePieces)
+    );
+
   const fillSpacesDown = vacatedPosition => {
     const gamePiecesFromState = { ...gamePieces };
 
@@ -95,6 +103,10 @@ const Board = ({ context }) => {
       gamePiecesFromState[vacatedPosition].color = newGeneratedColor;
       gamePiecesFromState[vacatedPosition].swell = true;
       setGamePiecesData(gamePiecesFromState);
+
+      if (noValidMovesAvailable()) {
+        onGameOver();
+      }
       return;
     }
 
@@ -131,6 +143,9 @@ const Board = ({ context }) => {
     setGamePiecesData(gamePiecesFromState);
 
     fillSpacesDown(position);
+    if (noValidMovesAvailable()) {
+      onGameOver();
+    }
   };
 
   return (

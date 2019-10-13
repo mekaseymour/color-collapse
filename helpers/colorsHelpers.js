@@ -71,3 +71,11 @@ export const getResultingColor = (firstColor, secondColor) => {
     }
   }
 };
+
+const isPrimaryColor = color => color && !!PRIMARY_COLORS[color.toUpperCase()];
+const isSecondaryColor = color =>
+  color && !!SECONDARY_COLORS[color.toUpperCase()];
+
+export const pieceIsPrimaryColor = piece => isPrimaryColor(piece.color);
+export const pieceIsSecondaryColor = piece => isSecondaryColor(piece.color);
+export const pieceIsBlack = piece => piece.color === BLACK;

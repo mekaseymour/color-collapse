@@ -4,7 +4,6 @@ import { GAME_BOARD_DIMENSION } from '../util/configs';
 const validCollisionOnSwipe = (initiatingSwipePosition, direction, board) => {
   switch (direction) {
     case 'up':
-      // need to check if space colliding with is out of range AND if space is not null
       if (!BoardHelpers.positionIsInTopRow(initiatingSwipePosition)) {
         const spaceCollidingWith =
           initiatingSwipePosition - GAME_BOARD_DIMENSION;
@@ -12,9 +11,9 @@ const validCollisionOnSwipe = (initiatingSwipePosition, direction, board) => {
         if (board[spaceCollidingWith].color !== null) {
           return spaceCollidingWith;
         }
-
-        break;
       }
+
+      break;
     case 'down':
       if (!BoardHelpers.positionIsInBottomRow(initiatingSwipePosition)) {
         const spaceCollidingWith =
@@ -23,9 +22,9 @@ const validCollisionOnSwipe = (initiatingSwipePosition, direction, board) => {
         if (board[spaceCollidingWith].color !== null) {
           return spaceCollidingWith;
         }
-
-        break;
       }
+
+      break;
     case 'left':
       if (!BoardHelpers.positionIsInLeftColumn(initiatingSwipePosition)) {
         const spaceCollidingWith = initiatingSwipePosition - 1;
@@ -33,9 +32,9 @@ const validCollisionOnSwipe = (initiatingSwipePosition, direction, board) => {
         if (board[spaceCollidingWith].color !== null) {
           return spaceCollidingWith;
         }
-
-        break;
       }
+
+      break;
     case 'right':
       if (!BoardHelpers.positionIsInRightColumn(initiatingSwipePosition)) {
         const spaceCollidingWith = initiatingSwipePosition + 1;
@@ -43,9 +42,9 @@ const validCollisionOnSwipe = (initiatingSwipePosition, direction, board) => {
         if (board[spaceCollidingWith].color !== null) {
           return spaceCollidingWith;
         }
-
-        break;
       }
+
+      break;
     default:
       return undefined;
   }
