@@ -4,7 +4,7 @@ import { Colors } from '../styles';
 
 const Modal = ({ children, visible }) => {
   return (
-    <ModalComponent animationType="fade" transparent={true} visible={visible}>
+    <ModalComponent animationType="slide" transparent={true} visible={visible}>
       <View style={styles.wrapper}>
         <View style={styles.container}>{children}</View>
       </View>
@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-    paddingVertical: 25,
+    paddingBottom: 25,
+    paddingTop: 65,
   },
   wrapper: {
     flex: 1,
