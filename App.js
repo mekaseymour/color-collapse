@@ -5,6 +5,7 @@ import * as Font from 'expo-font';
 import { StyleSheet, Text, View } from 'react-native';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import GameScreen from './screens/GameScreen';
+import HomeScreen from './screens/HomeScreen';
 
 function handleLoadingError(error: Error) {
   // In this case, you might want to report the error to your error reporting
@@ -26,6 +27,7 @@ const loadResourcesAsync = async () => {
 };
 
 const MainNavigator = createSwitchNavigator({
+  Home: HomeScreen,
   Game: GameScreen,
 });
 
