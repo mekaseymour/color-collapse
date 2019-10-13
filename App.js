@@ -14,6 +14,11 @@ function handleLoadingError(error: Error) {
 
 const loadResourcesAsync = async () => {
   await Promise.all([
+    Asset.loadAsync([
+      require('./assets/icons/pauseIcon.png'),
+      require('./assets/icons/questionMarkIcon.png'),
+      require('./assets/icons/sideToSide.png'),
+    ]),
     Font.loadAsync({
       paytone: require('./assets/fonts/PaytoneOne-Regular.ttf'),
     }),

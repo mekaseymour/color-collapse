@@ -2,7 +2,7 @@ import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../styles';
 
-const ScoreSection = ({ score }) => {
+const ScoreSection = ({ onHelpPress, score }) => {
   return (
     <View style={styles.container}>
       <View style={styles.scoreContainer}>
@@ -10,7 +10,7 @@ const ScoreSection = ({ score }) => {
         <Text style={styles.score}>{score}</Text>
       </View>
       <View style={styles.gameControlsContainer}>
-        <TouchableOpacity style={styles.gameControl}>
+        <TouchableOpacity style={styles.gameControl} onPress={onHelpPress}>
           <Image
             style={{ width: 25, height: 40 }}
             source={require('../assets/icons/questionMarkIcon.png')}
