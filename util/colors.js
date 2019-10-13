@@ -6,6 +6,14 @@ export const PURPLE = 'purple';
 export const RED = 'red';
 export const YELLOW = 'yellow';
 
+export const PRIMARY_COLORS = {
+  RED,
+  YELLOW,
+  BLUE,
+};
+
+export const SECONDARY_COLORS = { GREEN, ORANGE, PURPLE };
+
 export const COLORFUL_COLORS = {
   RED,
   ORANGE,
