@@ -1,3 +1,4 @@
 import * as Colors from './colors';
+import * as Button from './button';
 
-export { Colors };
+export { Button, Colors };
