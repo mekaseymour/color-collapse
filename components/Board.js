@@ -48,7 +48,7 @@ const Board = ({ context }) => {
       gamePieces
     );
 
-    if (validSpaceCollidingWith) {
+    if (validSpaceCollidingWith !== undefined) {
       handleCollision(
         originatedPosition,
         validSpaceCollidingWith,
