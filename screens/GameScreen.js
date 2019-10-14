@@ -19,6 +19,7 @@ const GameScreen = props => {
   const startNewGame = () => {
     setGameOver(false);
     context.setScore(0);
+    context.setNewHighScoreReached(false);
     setGamesPerSession(gamesPerSession + 1);
   };
 
@@ -43,6 +44,7 @@ const GameScreen = props => {
         onNewGamePress={startNewGame}
       />
       <ScoreSection
+        context={context}
         score={score}
         onHelpPress={() => {
           setShowHelpModal(true);

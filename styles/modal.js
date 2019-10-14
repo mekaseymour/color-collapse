@@ -23,6 +23,13 @@ export const primaryCtaText = {
   fontFamily: 'Arial',
 };
 
+export const highScoreLabel = {
+  fontFamily: 'Arial',
+  fontSize: 21,
+  color: Colors.blue,
+  fontWeight: '500',
+};
+
 export const scoreLabel = {
   fontFamily: 'Arial',
   fontSize: 21,

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { AsyncStorage, StyleSheet, Text, View } from 'react-native';
 
 import Dot from './Dot';
 import GameDot from './GameDot';
 import { Colors } from '../styles';
 import { BoardHelpers, ColorsHelpers, GameHelpers } from '../helpers';
 import validCollisionOnSwipe from '../helpers/validCollisionOnSwipe';
+import { HIGH_SCORE } from '../util/storageKeys';
 
 import {
   DOT_ACTION_DURATION,
@@ -82,10 +83,21 @@ const Board = ({ context, gamesCount, onGameOver }) => {
         firstColor,
         secondColor
       );
-      const totalFromState = context.score;
-      context.setScore(totalFromState + points);
+      updateScore(points);
 
       afterCollision();
+    }
+  };
+
+  const updateScore = newPoints => {
+    const totalFromState = context.score;
+    const newTotalScore = totalFromState + newPoints;
+    context.setScore(newTotalScore);
+
+    if (newTotalScore > context.highScore) {
+      context.setHighScore(newTotalScore);
+      context.setNewHighScoreReached(true);
+      AsyncStorage.setItem(HIGH_SCORE, String(newTotalScore));
     }
   };
 
