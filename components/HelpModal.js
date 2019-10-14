@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Modal from './Modal';
 import DemoSection from './DemoSection';
-import { Colors } from '../styles';
+import { Colors, Typography } from '../styles';
 
 const HelpModal = ({ onCompletePress, visible }) => {
   const [step, setStep] = useState(1);
@@ -115,12 +115,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
+    ...Typography.mainTypography,
     color: Colors.white,
     fontSize: 20,
-    fontFamily: 'Arial',
   },
   header: {
-    fontFamily: 'Arial',
+    ...Typography.mainTypography,
     fontWeight: '500',
     fontSize: 16,
     textAlign: 'center',
