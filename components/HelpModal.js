@@ -4,7 +4,7 @@ import Modal from './Modal';
 import DemoSection from './DemoSection';
 import { Colors } from '../styles';
 
-const HelpModal = ({ visible }) => {
+const HelpModal = ({ onCompletePress, visible }) => {
   const [step, setStep] = useState(1);
   const [show, setShow] = useState(null);
 
@@ -19,6 +19,8 @@ const HelpModal = ({ visible }) => {
       setStep(step + 1);
     } else {
       setShow(false);
+      onCompletePress();
+      setStep(1);
     }
   };
 
