@@ -1,27 +1,32 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Modal from './Modal';
 import { Button, Colors, Modal as ModalStyles } from '../styles';
 import ModalScoreSection from './ModalScoreSection';
 
-const GameOverModal = ({ context, visible, onHomePress, onNewGamePress }) => {
+const PauseModal = ({
+  context,
+  onContinueGamePress,
+  onQuitGamePress,
+  visible,
+}) => {
   return (
     <Modal visible={visible}>
       <React.Fragment>
-        <Text style={ModalStyles.title}>GAME OVER</Text>
+        <Text style={ModalStyles.title}>GAME PAUSED</Text>
         <ModalScoreSection context={context} />
         <View style={ModalStyles.buttonContainer}>
           <TouchableOpacity
             style={ModalStyles.primaryCta}
-            onPress={onNewGamePress}
+            onPress={onContinueGamePress}
           >
-            <Text style={ModalStyles.primaryCtaText}>PLAY AGAIN</Text>
+            <Text style={ModalStyles.primaryCtaText}>CONTINUE GAME</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={ModalStyles.secondaryCta}
-            onPress={onHomePress}
+            onPress={onQuitGamePress}
           >
-            <Text style={ModalStyles.secondaryCtaText}>HOME</Text>
+            <Text style={ModalStyles.secondaryCtaText}>QUIT</Text>
           </TouchableOpacity>
         </View>
       </React.Fragment>
@@ -29,4 +34,4 @@ const GameOverModal = ({ context, visible, onHomePress, onNewGamePress }) => {
   );
 };
 
-export default GameOverModal;
+export default PauseModal;

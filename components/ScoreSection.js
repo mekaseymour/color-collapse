@@ -2,11 +2,15 @@ import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../styles';
 
-const ScoreSection = ({ onHelpPress, score }) => {
+const ScoreSection = ({ context, onHelpPress, onPausePress, score }) => {
   return (
     <View style={styles.container}>
       <View style={styles.scoreContainer}>
-        <Text style={styles.scoreLabel}>score:</Text>
+        {context.newHighScoreReached ? (
+          <Text style={styles.highScoreLabel}>HIGH SCORE!</Text>
+        ) : (
+          <Text style={styles.scoreLabel}>score:</Text>
+        )}
         <Text style={styles.score}>{score}</Text>
       </View>
       <View style={styles.gameControlsContainer}>
@@ -16,7 +20,7 @@ const ScoreSection = ({ onHelpPress, score }) => {
             source={require('../assets/icons/questionMarkIcon.png')}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.gameControl}>
+        <TouchableOpacity style={styles.gameControl} onPress={onPausePress}>
           <Image
             style={{ width: 30, height: 30 }}
             source={require('../assets/icons/pauseIcon.png')}
@@ -37,6 +41,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
+  highScoreLabel: {
+    fontFamily: 'paytone',
+    fontSize: 20,
+    color: Colors.green,
+    letterSpacing: 1.8,
+    paddingBottom: 5,
+  },
   gameControl: {
     height: 60,
     aspectRatio: 1,
@@ -53,12 +64,15 @@ const styles = StyleSheet.create({
   scoreLabel: {
     fontFamily: 'paytone',
     fontSize: 24,
+    color: Colors.navy,
+    paddingBottom: 5,
   },
   score: {
     fontFamily: 'paytone',
     fontSize: 36,
     lineHeight: 36,
     letterSpacing: 3.75,
+    color: Colors.navy,
   },
 });
 
