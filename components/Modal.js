@@ -1,6 +1,15 @@
 import React from 'react';
-import { Modal as ModalComponent, StyleSheet, View } from 'react-native';
+import {
+  Dimensions,
+  Modal as ModalComponent,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { Colors } from '../styles';
+
+const IPHONE_X_SCREEN_HEIGHT = 850;
+export const IPHONE_X_OR_SMALLER =
+  Dimensions.get('window').height <= IPHONE_X_SCREEN_HEIGHT;
 
 const Modal = ({ children, visible }) => {
   return (
@@ -15,7 +24,7 @@ const Modal = ({ children, visible }) => {
 const styles = StyleSheet.create({
   container: {
     width: '85%',
-    height: '50%',
+    height: IPHONE_X_OR_SMALLER ? '60%' : '50%',
     backgroundColor: Colors.gray,
     shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 3 },
@@ -25,7 +34,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 15,
     paddingBottom: 25,
-    paddingTop: 65,
+    paddingTop: 35,
   },
   wrapper: {
     flex: 1,

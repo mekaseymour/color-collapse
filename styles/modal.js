@@ -1,12 +1,13 @@
 import * as Colors from './colors';
 import * as Button from './button';
+import * as Typography from './typography';
 
 export const buttonContainer = {
   width: '100%',
 };
 
 export const title = {
-  fontFamily: 'Arial',
+  ...Typography.mainTypography,
   fontSize: 24,
   color: Colors.navy,
 };
@@ -18,20 +19,20 @@ export const primaryCta = {
 };
 
 export const primaryCtaText = {
+  ...Typography.mainTypography,
   color: Colors.white,
   fontSize: 21,
-  fontFamily: 'Arial',
 };
 
 export const highScoreLabel = {
-  fontFamily: 'Arial',
+  ...Typography.mainTypography,
   fontSize: 21,
   color: Colors.blue,
   fontWeight: '500',
 };
 
 export const scoreLabel = {
-  fontFamily: 'Arial',
+  ...Typography.mainTypography,
   fontSize: 21,
   color: Colors.navy,
   fontWeight: '500',
@@ -59,7 +60,7 @@ export const secondaryCta = {
 };
 
 export const secondaryCtaText = {
+  ...Typography.mainTypography,
   color: Colors.purple,
   fontSize: 21,
-  fontFamily: 'Arial',
 };

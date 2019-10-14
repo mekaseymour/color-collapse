@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: color,
     width: defaultDotSize,
     aspectRatio: 1,
-    borderRadius: 50,
+    borderRadius: 100,
   }),
 });
 

@@ -77,6 +77,7 @@ const GameScreen = props => {
 const styles = StyleSheet.create({
   adSection: {
     marginHorizontal: '-5%',
+    alignItems: 'center',
   },
   container: {
     flex: 1,

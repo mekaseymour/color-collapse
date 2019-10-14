@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../styles';
+import { Colors, Typography } from '../styles';
 
 const HomeScreen = props => {
   return (
@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
     bottom: '15%',
   },
   buttonText: {
+    ...Typography.mainTypography,
     color: Colors.white,
-    fontFamily: 'Arial',
     fontSize: 24,
   },
   container: {
