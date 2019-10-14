@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
+import { AdMobBanner } from 'expo-ads-admob';
 
 import Board from '../components/Board';
 import ScoreSection from '../components/ScoreSection';
 import HelpModal from '../components/HelpModal';
 import GameOverModal from '../components/GameOverModal';
 import PauseModal from '../components/PauseModal';
+import { BANNER_AD_UNIT_ID } from '../util/adConfigs';
 
 const GameScreen = props => {
   const context = props.screenProps.context;
@@ -36,7 +38,10 @@ const GameScreen = props => {
         onContinueGamePress={() => setShowPauseModal(false)}
         onQuitGamePress={endGameAndNavigateHome}
       />
-      <HelpModal visible={showHelpModal} />
+      <HelpModal
+        visible={showHelpModal}
+        onCompletePress={() => setShowHelpModal(false)}
+      />
       <GameOverModal
         context={context}
         visible={gameOver}
@@ -56,12 +61,23 @@ const GameScreen = props => {
         onGameOver={() => setGameOver(true)}
         gamesCount={gamesPerSession}
       />
-      <View />
+      <View style={styles.adSection}>
+        <AdMobBanner
+          bannerSize="fullBanner"
+          adUnitID={BANNER_AD_UNIT_ID}
+          testDeviceID="EMULATOR"
+          servePersonalizedAds={true}
+          onDidFailToReceiveAdWithError={this.bannerError}
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  adSection: {
+    marginHorizontal: '-5%',
+  },
   container: {
     flex: 1,
     justifyContent: 'space-between',
