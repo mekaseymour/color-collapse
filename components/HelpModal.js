@@ -77,8 +77,7 @@ const HelpModal = ({ onCompletePress, visible }) => {
       {step === 3 ? (
         <React.Fragment>
           <Text style={styles.header}>
-            Collapse any two of the same colors together to get one of that
-            color
+            Collapse any two of the same color together
           </Text>
           <View>
             <DemoSection

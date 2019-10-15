@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: '5%',
-    paddingTop: '15%',
+    paddingTop: '15%', // 10% if iPad
   },
 });
 
