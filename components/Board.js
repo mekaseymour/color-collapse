@@ -127,13 +127,6 @@ const Board = ({ context, gamesCount, onGameOver }) => {
     setGamePiecesData(gamePiecesFromState);
   };
 
-  const onSwellComplete = position => {
-    const gamePiecesFromState = { ...gamePieces };
-
-    gamePiecesFromState[position].swell = false;
-    setGamePiecesData(gamePiecesFromState);
-  };
-
   const onCollisionComplete = position => {
     const gamePiecesFromState = { ...gamePieces };
     gamePiecesFromState[position].color = null;
@@ -200,7 +193,6 @@ const Board = ({ context, gamesCount, onGameOver }) => {
                       onMove={handleMove}
                       onCollisionComplete={onCollisionComplete}
                       onShiftComplete={onShiftComplete}
-                      onSwellComplete={onSwellComplete}
                     />
                   );
                 } else {

@@ -15,7 +15,6 @@ const Dot = ({
   verticalShift,
   onAnimationComplete,
   isShifting,
-  onSwellComplete,
   showSwell,
 }) => {
   const defaultDotSize =
