@@ -42,16 +42,16 @@ const Board = ({ context, gamesCount, onGameOver }) => {
     return rows;
   };
 
-  const handleMove = (originatedPosition, moveDirection, onSuccessfulMove) => {
+  const handleMove = (originPosition, moveDirection, onSuccessfulMove) => {
     const validSpaceCollidingWith = validCollisionOnSwipe(
-      originatedPosition,
+      originPosition,
       moveDirection,
       gamePieces
     );
 
     if (validSpaceCollidingWith !== undefined) {
       handleCollision(
-        originatedPosition,
+        originPosition,
         validSpaceCollidingWith,
         onSuccessfulMove
       );
@@ -116,9 +116,13 @@ const Board = ({ context, gamesCount, onGameOver }) => {
       gamePiecesFromState[vacatedPosition].swell = true;
       setGamePiecesData(gamePiecesFromState);
 
-      if (noValidMovesAvailable()) {
+      if (
+        BoardHelpers.noSpacesAreEmpty(gamePieces) &&
+        noValidMovesAvailable()
+      ) {
         onGameOver();
       }
+
       return;
     }
 
@@ -127,16 +131,8 @@ const Board = ({ context, gamesCount, onGameOver }) => {
     setGamePiecesData(gamePiecesFromState);
   };
 
-  const onSwellComplete = position => {
-    const gamePiecesFromState = { ...gamePieces };
-
-    gamePiecesFromState[position].swell = false;
-    setGamePiecesData(gamePiecesFromState);
-  };
-
   const onCollisionComplete = position => {
     const gamePiecesFromState = { ...gamePieces };
-    gamePiecesFromState[position].color = null;
     gamePiecesFromState[position].colorWhileAnimating = null;
     gamePiecesFromState[position].isAnimating = false;
     setGamePiecesData(gamePiecesFromState);
@@ -155,9 +151,6 @@ const Board = ({ context, gamesCount, onGameOver }) => {
     setGamePiecesData(gamePiecesFromState);
 
     fillSpacesDown(position);
-    if (noValidMovesAvailable()) {
-      onGameOver();
-    }
   };
 
   return (
@@ -196,11 +189,9 @@ const Board = ({ context, gamesCount, onGameOver }) => {
                       key={`${i}-${j}`}
                       data={gamePieces[position]}
                       boardWidth={boardWidth}
-                      onValidCollision={handleCollision}
                       onMove={handleMove}
                       onCollisionComplete={onCollisionComplete}
                       onShiftComplete={onShiftComplete}
-                      onSwellComplete={onSwellComplete}
                     />
                   );
                 } else {

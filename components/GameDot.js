@@ -13,10 +13,8 @@ const GameDot = ({
   boardWidth,
   onMove,
   onCollisionComplete,
-  onValidCollision,
   data,
   onShiftComplete,
-  onSwellComplete,
 }) => {
   const [dotColor, setDotColor] = useState(null);
   const [horizontalShift, setHorizontalShift] = useState(0);
@@ -78,7 +76,6 @@ const GameDot = ({
             shift ? onShiftComplete(position) : onCollisionComplete(position)
           }
           isShifting={shift}
-          onSwellComplete={() => onSwellComplete(position)}
           showSwell={!!swell}
         />
       </View>

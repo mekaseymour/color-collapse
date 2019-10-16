@@ -80,3 +80,6 @@ export const pieceHasValidMove = (piece, board) => {
     return adjacentPieces.some(p => pieceIsBlack(p));
   }
 };
+
+export const noSpacesAreEmpty = pieces =>
+  !Object.values(pieces).some(piece => piece.color === null);
