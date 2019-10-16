@@ -13,7 +13,6 @@ const GameDot = ({
   boardWidth,
   onMove,
   onCollisionComplete,
-  onValidCollision,
   data,
   onShiftComplete,
 }) => {

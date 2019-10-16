@@ -8,6 +8,7 @@ import HelpModal from '../components/HelpModal';
 import GameOverModal from '../components/GameOverModal';
 import PauseModal from '../components/PauseModal';
 import { BANNER_AD_UNIT_ID } from '../util/adConfigs';
+import { SMALLER_THAN_IPAD_SCREEN_WIDTH } from '../util/configs';
 
 const GameScreen = props => {
   const context = props.screenProps.context;
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: '5%',
-    paddingTop: '15%', // 10% if iPad
+    paddingTop: SMALLER_THAN_IPAD_SCREEN_WIDTH ? '15%' : '10%',
   },
 });
 

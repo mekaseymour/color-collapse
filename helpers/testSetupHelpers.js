@@ -75,3 +75,42 @@ export const boardWithValidMoves = {
     color: 'black',
   },
 };
+
+export const boardWithEmptySpace = {
+  0: {
+    position: 0,
+    color: 'red',
+  },
+  1: {
+    position: 1,
+    color: 'red',
+  },
+  2: {
+    position: 2,
+    color: null,
+  },
+  3: {
+    position: 3,
+    color: 'purple',
+  },
+  4: {
+    position: 4,
+    color: 'purple',
+  },
+  5: {
+    position: 5,
+    color: 'purple',
+  },
+  6: {
+    position: 6,
+    color: 'black',
+  },
+  7: {
+    position: 7,
+    color: 'black',
+  },
+  8: {
+    position: 8,
+    color: 'black',
+  },
+};

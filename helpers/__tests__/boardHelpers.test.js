@@ -134,3 +134,21 @@ describe('pieceHasValidMove', () => {
     expect(actual).toEqual(true);
   });
 });
+
+describe('noSpacesAreEmpty', () => {
+  it('returns true if no board spaces are empty', () => {
+    const actual = BoardHelpers.noSpacesAreEmpty(
+      TestSetupHelpers.boardWithNoValidMoves
+    );
+
+    expect(actual).toEqual(true);
+  });
+
+  it('returns false if at least one board space is empty', () => {
+    const actual = BoardHelpers.noSpacesAreEmpty(
+      TestSetupHelpers.boardWithEmptySpace
+    );
+
+    expect(actual).toEqual(false);
+  });
+});
